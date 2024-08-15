@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from "express";
+import clientRoutes from "./routes/client/index.route";
 
 // env
 import dotenv from "dotenv";
@@ -18,10 +19,16 @@ app.set("views", "./views");
 app.set("view engine", "pug");
 // End pug
 
-app.get("/topics", (req: Request, res: Response) => {
-  res.render("client/pages/topics/index");
-});
+// static file
+app.use(express.static("public"));
+// End static file
+
+// Client Routes
+
+clientRoutes(app);
+// End Client Routes
+
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
-})
+});
