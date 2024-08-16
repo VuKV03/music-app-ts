@@ -45,15 +45,14 @@ export const detail = async (req: Request, res: Response) => {
     deleted: false,
   });
 
-  console.log(song);
   const singer = await Singer.findOne({
     _id: song.singerId,
-    deleted: false
+    deleted: false,
   }).select("fullName");
 
   const topic = await Topic.findOne({
     _id: song.topicId,
-    deleted: false
+    deleted: false,
   }).select("title");
 
   res.render("client/pages/songs/detail", {
@@ -61,5 +60,34 @@ export const detail = async (req: Request, res: Response) => {
     song: song,
     singer: singer,
     topic: topic,
+  });
+};
+
+// [PATCH] /songs/like/:typeLike/:idSong
+export const like = async (req: Request, res: Response) => {
+  const idSong: string = req.params.idSong;
+  const typeLike: string = req.params.typeLike;
+
+  const song = await Song.findOne({
+    _id: idSong,
+    status: "active",
+    deleted: false,
+  });
+
+  const updateLike: number = typeLike == "like" ? song.like + 1 : song.like - 1;
+
+  await Song.updateOne(
+    {
+      _id: idSong,
+    },
+    {
+      like: updateLike,
+    }
+  );
+
+  res.json({
+    code: 200,
+    message: "Thành công!",
+    like: updateLike,
   });
 };
