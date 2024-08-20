@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import clientRoutes from "./routes/client/index.route";
 import adminRoutes from "./routes/admin/index.route";
+import methodOverride from "method-override";
 
 import path from "path";
 
@@ -19,6 +20,8 @@ database.connect();
 
 const app: Express = express();
 const port: number | string = 3000 || process.env.PORT;
+
+app.use(methodOverride("_method"));
 
 // pug
 app.set("views", "./views");
