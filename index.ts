@@ -9,6 +9,8 @@ import dotenv from "dotenv";
 dotenv.config();
 // End env
 
+import bodyParse from "body-parser";
+
 // database
 import * as database from "./config/database";
 import { systemConfig } from "./config/config";
@@ -45,6 +47,10 @@ clientRoutes(app);
 // Admin Routes
 adminRoutes(app);
 // End admin Routes
+
+// body parser
+app.use(bodyParse.urlencoded({ extended: false }));
+// End body parser
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
