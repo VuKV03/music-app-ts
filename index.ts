@@ -24,7 +24,7 @@ const port: number | string = 3000 || process.env.PORT;
 app.use(methodOverride("_method"));
 
 // pug
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
 // End pug
 
@@ -40,7 +40,7 @@ app.use(
 // End TinyMCE
 
 // static file
-app.use(express.static("public"));
+app.use(express.static(`${__dirname}/public`));
 // End static file
 
 // Client Routes
