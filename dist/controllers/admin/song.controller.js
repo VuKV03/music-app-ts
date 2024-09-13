@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.editPatch = exports.edit = exports.createPost = exports.create = exports.index = void 0;
+exports.deleteSong = exports.editPatch = exports.edit = exports.createPost = exports.create = exports.index = void 0;
 const song_model_1 = __importDefault(require("../../models/song.model"));
 const topic_model_1 = __importDefault(require("../../models/topic.model"));
 const singer_model_1 = __importDefault(require("../../models/singer.model"));
@@ -22,7 +22,7 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         deleted: false,
     });
     res.render("admin/pages/songs/index", {
-        pageTitle: "Quản lý bài viết",
+        pageTitle: "Quản lý bài hát",
         songs: songs,
     });
 });
@@ -32,12 +32,12 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         deleted: false,
     }).select("title");
     const singers = yield singer_model_1.default.find({
-        deleted: false
+        deleted: false,
     }).select("fullName");
     res.render("admin/pages/songs/create", {
         pageTitle: "Thêm mới bài hát",
         topics: topics,
-        singers: singers
+        singers: singers,
     });
 });
 exports.create = create;
@@ -69,19 +69,19 @@ const edit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     const song = yield song_model_1.default.findOne({
         _id: id,
-        deleted: false
+        deleted: false,
     });
     const topics = yield topic_model_1.default.find({
-        deleted: false
+        deleted: false,
     }).select("title");
     const singers = yield singer_model_1.default.find({
-        deleted: false
+        deleted: false,
     }).select("fullName");
     res.render("admin/pages/songs/edit", {
         pageTitle: "Chỉnh sửa bài hát",
         song: song,
         topics: topics,
-        singers: singers
+        singers: singers,
     });
 });
 exports.edit = edit;
@@ -103,8 +103,19 @@ const editPatch = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     yield song_model_1.default.updateOne({
         _id: id,
-        deleted: false
+        deleted: false,
     }, dataSong);
     res.redirect(`back`);
 });
 exports.editPatch = editPatch;
+const deleteSong = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    yield song_model_1.default.updateOne({
+        _id: id,
+    }, {
+        deleted: true,
+        deletedAt: new Date(),
+    });
+    res.redirect(`back`);
+});
+exports.deleteSong = deleteSong;

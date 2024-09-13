@@ -11,7 +11,7 @@ export const index = async (req: Request, res: Response) => {
   });
 
   res.render("admin/pages/songs/index", {
-    pageTitle: "Quản lý bài viết",
+    pageTitle: "Quản lý bài hát",
     songs: songs,
   });
 };
@@ -23,13 +23,13 @@ export const create = async (req: Request, res: Response) => {
   }).select("title");
 
   const singers = await Singer.find({
-    deleted: false
+    deleted: false,
   }).select("fullName");
 
   res.render("admin/pages/songs/create", {
     pageTitle: "Thêm mới bài hát",
     topics: topics,
-    singers: singers
+    singers: singers,
   });
 };
 
@@ -38,11 +38,11 @@ export const createPost = async (req: Request, res: Response) => {
   let avatar = req.body.avatar;
   let audio = req.body.audio;
 
-  if(req.body.avatar) {
+  if (req.body.avatar) {
     avatar = req.body.avatar[0];
   }
 
-  if(req.body.audio) {
+  if (req.body.audio) {
     audio = req.body.audio[0];
   }
 
@@ -55,13 +55,13 @@ export const createPost = async (req: Request, res: Response) => {
     avatar: avatar,
     audio: audio,
     lyrics: req.body.lyrics,
-  }
+  };
 
   const song = new Song(dataSong);
   await song.save();
 
   res.redirect(`/${systemConfig.prefixAdmin}/songs`);
-}
+};
 
 // [GET] /admin/songs/edit/:id
 export const edit = async (req: Request, res: Response) => {
@@ -69,22 +69,22 @@ export const edit = async (req: Request, res: Response) => {
 
   const song = await Song.findOne({
     _id: id,
-    deleted: false
+    deleted: false,
   });
 
   const topics = await Topic.find({
-    deleted: false
+    deleted: false,
   }).select("title");
 
   const singers = await Singer.find({
-    deleted: false
+    deleted: false,
   }).select("fullName");
 
   res.render("admin/pages/songs/edit", {
     pageTitle: "Chỉnh sửa bài hát",
     song: song,
     topics: topics,
-    singers: singers
+    singers: singers,
   });
 };
 
@@ -99,20 +99,40 @@ export const editPatch = async (req: Request, res: Response) => {
     description: req.body.description,
     status: req.body.status,
     lyrics: req.body.lyrics,
-  }
-  
-  if(req.body.avatar) {
+  };
+
+  if (req.body.avatar) {
     dataSong["avatar"] = req.body.avatar[0];
   }
 
-  if(req.body.audio) {
+  if (req.body.audio) {
     dataSong["audio"] = req.body.audio[0];
   }
 
-  await Song.updateOne({
-    _id: id,
-    deleted: false
-  }, dataSong);
+  await Song.updateOne(
+    {
+      _id: id,
+      deleted: false,
+    },
+    dataSong
+  );
+
+  res.redirect(`back`);
+};
+
+// [DELETE] /admin/songs/delete/:id
+export const deleteSong = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  await Song.updateOne(
+    {
+      _id: id,
+    },
+    {
+      deleted: true,
+      deletedAt: new Date(),
+    }
+  );
 
   res.redirect(`back`);
 };
